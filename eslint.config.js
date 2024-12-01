@@ -28,6 +28,8 @@ export default tseslint.config(
       // Disallow semicolons
       semi: ['error', 'never'],
       '@/semi': ['error', 'never'],
+      // Enforces 2 spaces per indentation level
+      "indent": ["error", 2]
     },
   },
 )
