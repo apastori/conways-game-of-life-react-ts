@@ -1,4 +1,4 @@
 export interface IGridConfig {
-    rows: number
-    columns: number
+  rows: number
+  columns: number
 }

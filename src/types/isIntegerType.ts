@@ -1,0 +1,1 @@
+export type isInteger<T extends number> = `${T}` extends `${bigint}` ? T : never
