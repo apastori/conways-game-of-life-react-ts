@@ -1,20 +1,23 @@
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import ReactDOM, { Root } from 'react-dom/client'
 import './index.css'
+import { RootNotFound } from './errors/RootNotFound.ts'
+import { RootNotDivElement } from './errors/RootNotDivElement.ts'
 import App from './App.tsx'
 
-// Safely get the root element from the DOM
+// Get the Root Element from the DOM
 const rootElement: HTMLElement | null = document.getElementById('root')
 
-if (!rootElement) {
-  throw new Error('Root element is not found in Base HTML')
-}
+//Check if Root Element was Found in DOM 
+if (!rootElement) throw new RootNotFound()
 
-if (!(rootElement instanceof HTMLDivElement)) {
-  throw new Error('Root element is not a DIV element')
-}
+//Check if Root Element is a Classic Div Element
+if (!(rootElement instanceof HTMLDivElement)) throw new RootNotDivElement()
 
-createRoot(rootElement as HTMLDivElement).render(
+// Create a root using the container
+const root: Root = ReactDOM.createRoot(rootElement as HTMLDivElement)
+
+root.render(
   <StrictMode>
     <App />
   </StrictMode>,
