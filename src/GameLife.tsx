@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react'
 import { IGameLifeProps } from './interfaces/IGameLifeProps'
 import type { Grid } from './types/GridType'
 import { GridConfig } from './GridConfig'
-import { createEmptyGrid } from './utils/utils'
+import { createEmptyGrid } from './utils/createEmptyGrid'
 import { twMerge } from 'tailwind-merge'
 import { PlayPauseButton } from './components/PlayPauseButton'
 import type { isInteger } from './types/isIntegerType'
@@ -32,10 +32,10 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
           let liveNeighbors: NonNegativeInteger = createNonNegativeInteger(0)
           // Check all neighboring cells
           Object.values(Directions).forEach(([directionX, directionY]) => {
-
-            const neighborRow = createNonNegativeInteger(row + directionX)
-            const neighborCol = createNonNegativeInteger(col + directionY)
-
+            console.log(directionX, directionY)
+            const neighborRow: number = row + directionX
+            const neighborCol: number = col + directionY
+            console.log(neighborRow, neighborCol)
             // Ensure the neighbor is within grid bounds
             if (
               neighborRow >= 0 &&
@@ -44,7 +44,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
               neighborCol < GridConfig.columns
             ) {
               liveNeighbors =
-              createNonNegativeInteger(liveNeighbors +  (currentGrid[neighborRow][neighborCol] ? 1 : 0 as BooleanNumber))
+              createNonNegativeInteger(liveNeighbors + (currentGrid[neighborRow][neighborCol] ? 1 : 0 as BooleanNumber))
             }
           })
           const underPopulation: boolean = liveNeighbors < 2
