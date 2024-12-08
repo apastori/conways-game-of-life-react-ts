@@ -1,0 +1,1 @@
+export type Rule = (live: number) => boolean;

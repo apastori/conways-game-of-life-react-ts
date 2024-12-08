@@ -1,16 +1,66 @@
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { IGameLifeProps } from './interfaces/IGameLifeProps'
-import { Grid } from './types/GridType'
+import type { Grid } from './types/GridType'
+import { GridConfig } from './GridConfig'
 import { createEmptyGrid } from './utils/utils'
 import { twMerge } from 'tailwind-merge'
 import { PlayPauseButton } from './components/PlayPauseButton'
+import type { isInteger } from './types/isIntegerType'
+import { GenerationText } from './components/GenerationText'
+import { Directions } from './Directions'
+import { createNonNegativeInteger } from './utils/createNonNegativeInteger'
+import { NonNegativeInteger } from './types/NonNegativeInteger'
+import { BooleanNumber } from './types/BooleanNumberType'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
   const [grid, setGrid]: [Grid, React.Dispatch<React.SetStateAction<Grid>>] = useState<Grid>(createEmptyGrid(rows, columns))
   const [isPlaying, setIsPlaying]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
+  const [generation, setGeneration]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0)
   const playingRef: React.MutableRefObject<boolean> = useRef(isPlaying)
   playingRef.current = isPlaying
+
+  const runGameOfLife = useCallback(() => {
+    if (!playingRef.current)  return
+    setGrid((currentGrid) => {
+      const newGrid: Grid = currentGrid.map((arr) => [...arr])
+      // Since Typescript types work only at compile time, I can
+      // define iteration variables rows and columns as IsInteger<0> 
+      for (let row: isInteger<0> = 0; row < GridConfig.rows; row++) {
+        for (let col: isInteger<0.0> = 0; col < GridConfig.columns; col++) {
+          let liveNeighbors: NonNegativeInteger = createNonNegativeInteger(0)
+          // Check all neighboring cells
+          Object.values(Directions).forEach(([directionX, directionY]) => {
+
+            const neighborRow = createNonNegativeInteger(row + directionX)
+            const neighborCol = createNonNegativeInteger(col + directionY)
+
+            // Ensure the neighbor is within grid bounds
+            if (
+              neighborRow >= 0 &&
+              neighborRow < rows &&
+              neighborCol >= 0 &&
+              neighborCol < col
+            ) {
+              liveNeighbors =
+              createNonNegativeInteger(liveNeighbors +  (currentGrid[neighborRow][neighborCol] ? 1 : 0 as BooleanNumber))
+            }
+          })
+          const underPopulation: boolean = liveNeighbors < 2
+          const overpopulation: boolean = liveNeighbors > 3
+          
+          // Apply Conway's Game of Life rules
+          if (liveNeighbors < 2 || liveNeighbors > 3) {
+            newGrid[row][col] = 0
+          } 
+          if (currentGrid[row][col] === 0 && liveNeighbors === 3) {
+            newGrid[row][col] = 1
+          }
+        }
+      }
+      return newGrid  
+    })
+  }, [])
 
   return (
     <div className='GameLife'>
@@ -24,6 +74,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
           }}
         />
       </div>
+      <GenerationText generation={generation}/>
       <div 
         className='grid-display'
         style={{

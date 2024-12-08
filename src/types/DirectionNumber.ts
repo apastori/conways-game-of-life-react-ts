@@ -1,0 +1,1 @@
+export type DirectionNumber = -1 | 0 | 1
