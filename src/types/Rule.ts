@@ -1,1 +1,1 @@
-export type Rule = (live: number) => boolean;
+export type Rule = (liveNeighbors: number) => boolean;

@@ -1,50 +1,21 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+##Here are the rules of Conway's Game of Life:
 
-Currently, two official plugins are available:
+1. Underpopulation: If a cell has fewer than two live neighbors, it dies (because it is too isolated).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+2. Survival: If a cell has two or three live neighbors, it remains alive (because it has the right amount of population to sustain itself).
 
-## Expanding the ESLint configuration
+3. Overpopulation: If a cell has more than three live neighbors, it dies (because there are too many neighbors).
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+4. Reproduction: If a dead cell has exactly three live neighbors, it becomes alive (because three neighboring cells "reproduce" the dead cell).
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+In Terms of "Patterns":
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+In the context of Conway's Game of Life, different initial configurations of cells can evolve into various patterns, which may include the following:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
++ Still Life: Patterns that do not change over time (e.g., block, beehive).
++ Oscillators: Patterns that repeat themselves after a certain number of generations (e.g., blinker, toad).
++ Gliders: Patterns that move across the grid (e.g., glider).
++ Spaceships: Larger patterns that move in a specific direction (e.g., lightweight spaceship).

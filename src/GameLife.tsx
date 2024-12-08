@@ -11,6 +11,7 @@ import { Directions } from './Directions'
 import { createNonNegativeInteger } from './utils/createNonNegativeInteger'
 import { NonNegativeInteger } from './types/NonNegativeInteger'
 import { BooleanNumber } from './types/BooleanNumberType'
+import { Rules } from './Rules'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
@@ -38,9 +39,9 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
             // Ensure the neighbor is within grid bounds
             if (
               neighborRow >= 0 &&
-              neighborRow < rows &&
+              neighborRow < GridConfig.rows &&
               neighborCol >= 0 &&
-              neighborCol < col
+              neighborCol < GridConfig.columns
             ) {
               liveNeighbors =
               createNonNegativeInteger(liveNeighbors +  (currentGrid[neighborRow][neighborCol] ? 1 : 0 as BooleanNumber))
@@ -48,29 +49,42 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
           })
           const underPopulation: boolean = liveNeighbors < 2
           const overpopulation: boolean = liveNeighbors > 3
-          
           // Apply Conway's Game of Life rules
-          if (liveNeighbors < 2 || liveNeighbors > 3) {
+          if (Rules.underPopulation(liveNeighbors) || Rules.overPopulation(liveNeighbors)) {
             newGrid[row][col] = 0
-          } 
-          if (currentGrid[row][col] === 0 && liveNeighbors === 3) {
+          }
+          const isCellDead: boolean = currentGrid[row][col] === 0
+          if (Rules.reproduction(liveNeighbors, isCellDead) || Rules.survival(liveNeighbors)) {
             newGrid[row][col] = 1
           }
         }
       }
       return newGrid  
     })
-  }, [])
+    setTimeout(runGameOfLife, 100)
+  }, [playingRef, setGrid])
 
   return (
-    <div className='GameLife'>
+    <div className='GameLife'
+      style={{
+        textAlign: 'center'
+      }}
+    >
       <h1 className='md:text-2xl text-xl'>Conway's Game of Life</h1>
-      <div className='flex gap-4 items-center'>
+      <div className='flex gap-4 items-center justify-center' 
+        style={{
+          marginTop: '15px',
+          marginBottom: '15px'
+        }}>
         <PlayPauseButton
           isPlaying={isPlaying}
           onClick={() => {
             setIsPlaying(!isPlaying)
-            if (!isPlaying) playingRef.current = true           
+            if (!isPlaying) {
+              playingRef.current = true
+              // Run Game of Life Simulation
+              runGameOfLife()
+            }           
           }}
         />
       </div>
