@@ -12,8 +12,11 @@ import { createNonNegativeInteger } from './utils/createNonNegativeInteger'
 import { NonNegativeInteger } from './types/NonNegativeInteger'
 import { BooleanNumber } from './types/BooleanNumberType'
 import { Rules } from './Rules'
+import { createInteger } from './utils/createInteger'
+import { SeedRandomButton } from './components/SeedRandomButton'
+import { ClearButton } from './components/ClearButton'
 
-const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
+const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX.Element => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
   const [grid, setGrid]: [Grid, React.Dispatch<React.SetStateAction<Grid>>] = useState<Grid>(createEmptyGrid(rows, columns))
   const [isPlaying, setIsPlaying]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
@@ -32,10 +35,9 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
           let liveNeighbors: NonNegativeInteger = createNonNegativeInteger(0)
           // Check all neighboring cells
           Object.values(Directions).forEach(([directionX, directionY]) => {
-            console.log(directionX, directionY)
-            const neighborRow: number = row + directionX
-            const neighborCol: number = col + directionY
-            console.log(neighborRow, neighborCol)
+            //Make sure row + directionX expression is Integer
+            const neighborRow: number = createInteger(row + directionX)
+            const neighborCol: number = createInteger(col + directionY)
             // Ensure the neighbor is within grid bounds
             if (
               neighborRow >= 0 &&
@@ -85,6 +87,27 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps) => {
               // Run Game of Life Simulation
               runGameOfLife()
             }           
+          }}
+        />
+        <SeedRandomButton
+          onClick={
+            () => {
+              const newGridRows: Grid = []
+              for (let i: number = 0; i < rows; i++) {
+                newGridRows.push(
+                  Array.from(Array(columns), () => {
+                    return Math.random() > 0.75 ? 1 : 0
+                  })
+                )  
+              }
+              setGrid(newGridRows)
+            }
+          }
+        />
+        <ClearButton
+          onClick={() => {
+            setGrid(createEmptyGrid(rows, columns))
+            setIsPlaying(false)  
           }}
         />
       </div>

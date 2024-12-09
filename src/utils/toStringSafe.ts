@@ -1,3 +1,5 @@
+import { NotConvertibleToStringError } from '../errors/NotConvertibleToStringError'
+
 export function toStringSafe(value: unknown): string {
   if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
     return String(value)
@@ -5,5 +7,5 @@ export function toStringSafe(value: unknown): string {
   if (value && typeof value === 'object') {
     return JSON.stringify(value) // Converts objects and arrays to strings
   } 
-  throw new Error('Value cannot be converted to a string')
+  throw new NotConvertibleToStringError(value)
 }

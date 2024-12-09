@@ -1,4 +1,4 @@
-export class NotConvertibleToString extends Error {
+export class NotConvertibleToStringError extends Error {
   notStringifyValue: unknown
   constructor(value: unknown) {
     // Pass the message to the parent Error class
@@ -7,6 +7,6 @@ export class NotConvertibleToString extends Error {
     this.name = 'Not Convertible To String'
     this.notStringifyValue = value
     // Set the prototype explicitly for correct inheritance
-    Object.setPrototypeOf(this, NotConvertibleToString.prototype)
+    Object.setPrototypeOf(this, NotConvertibleToStringError.prototype)
   }
 }

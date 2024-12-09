@@ -2,7 +2,7 @@ import { twMerge } from 'tailwind-merge'
 import { IPlayPauseButtonProps } from '../interfaces/IPlayPauseButtonProps'
 import { BsFillPauseFill, BsFillPlayFill } from 'react-icons/bs'
 
-export const PlayPauseButton: React.FC<IPlayPauseButtonProps> = ({onClick, isPlaying}: IPlayPauseButtonProps) => {
+export const PlayPauseButton: React.FC<IPlayPauseButtonProps> = ({onClick, isPlaying}: IPlayPauseButtonProps): JSX.Element => {
   return (
     <button
       className={twMerge(
