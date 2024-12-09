@@ -56,12 +56,15 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
             newGrid[row][col] = 0
           }
           const isCellDead: boolean = currentGrid[row][col] === 0
-          if (Rules.reproduction(liveNeighbors, isCellDead) || Rules.survival(liveNeighbors)) {
+          if (Rules.reproduction(liveNeighbors, isCellDead)) {
             newGrid[row][col] = 1
           }
         }
       }
       return newGrid  
+    })
+    setGeneration((prevGeneration: number) => {
+      return prevGeneration + 1
     })
     setTimeout(runGameOfLife, 100)
   }, [playingRef, setGrid])
