@@ -23,6 +23,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
   const [isPlaying, setIsPlaying]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [generation, setGeneration]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0)
   const [isMouseDown, setIsMouseDown]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
+  const [speed, setSpeed]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(100)
   const playingRef: React.MutableRefObject<boolean> = useRef(isPlaying)
   playingRef.current = isPlaying
 
@@ -81,7 +82,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
   }
 
   const handleMouseEnter = (row: number, col: number): void => {
-    if (!isMouseDown) {
+    if (isMouseDown) {
       toggleCellState(row, col)
     }
   }
