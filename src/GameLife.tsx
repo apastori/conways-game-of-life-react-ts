@@ -15,12 +15,14 @@ import { Rules } from './Rules'
 import { createInteger } from './utils/createInteger'
 import { SeedRandomButton } from './components/SeedRandomButton'
 import { ClearButton } from './components/ClearButton'
+import { assertIsInteger } from './utils/assertIsInteger'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX.Element => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
   const [grid, setGrid]: [Grid, React.Dispatch<React.SetStateAction<Grid>>] = useState<Grid>(createEmptyGrid(rows, columns))
   const [isPlaying, setIsPlaying]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [generation, setGeneration]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0)
+  const [isMouseDown, setIsMouseDown]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const playingRef: React.MutableRefObject<boolean> = useRef(isPlaying)
   playingRef.current = isPlaying
 
@@ -64,10 +66,38 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
       return newGrid  
     })
     setGeneration((prevGeneration: number) => {
+      assertIsInteger(prevGeneration)
       return prevGeneration + 1
     })
     setTimeout(runGameOfLife, 100)
   }, [playingRef, setGrid])
+
+  const handleMouseDown = (): void => {
+    setIsMouseDown(true)
+  }
+
+  const handleMouseUp = (): void => {
+    setIsMouseDown(false)
+  }
+
+  const handleMouseEnter = (row: number, col: number): void => {
+    if (!isMouseDown) {
+      toggleCellState(row, col)
+    }
+  }
+
+  const toggleCellState = (rowToToggle: number, columnToToggle: number): void => {
+    const newGrid = grid.map((row, rowIndex) =>
+      row.map((cell, colIndex) =>
+        rowIndex === rowToToggle && colIndex === columnToToggle
+          ? cell
+            ? 0
+            : 1
+          : cell
+      )
+    )
+    setGrid(newGrid)
+  }
 
   return (
     <div className='GameLife'
@@ -127,6 +157,14 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
           grid.map((rows, rowIndex) => (
             rows.map((col, colIndex) => (
               <button
+                onMouseDown={handleMouseDown}
+                onMouseUp={handleMouseUp}
+                onMouseEnter={() => {
+                  handleMouseEnter(rowIndex, colIndex)
+                }}
+                onClick={() => {
+                  toggleCellState(rowIndex, colIndex)
+                }}
                 key={`${rowIndex}-${colIndex}`}
                 className={twMerge(
                   'border border-[#9050e9]',
