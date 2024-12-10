@@ -16,6 +16,7 @@ import { createInteger } from './utils/createInteger'
 import { SeedRandomButton } from './components/SeedRandomButton'
 import { ClearButton } from './components/ClearButton'
 import { assertIsInteger } from './utils/assertIsInteger'
+import GridButton from './components/GridButton'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX.Element => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
@@ -157,24 +158,16 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
         {
           grid.map((rows, rowIndex) => (
             rows.map((col, colIndex) => (
-              <button
-                onMouseDown={handleMouseDown}
-                onMouseUp={handleMouseUp}
-                onMouseEnter={() => {
-                  handleMouseEnter(rowIndex, colIndex)
-                }}
-                onClick={() => {
-                  toggleCellState(rowIndex, colIndex)
-                }}
+              <GridButton
                 key={`${rowIndex}-${colIndex}`}
-                className={twMerge(
-                  'border border-[#9050e9]',
-                  grid[rowIndex][colIndex] 
-                    ? 'bg-[#ad7bee]' 
-                    : 'bg-[#240643]'
-                )}
-              >
-              </button>
+                rowIndex={rowIndex}
+                colIndex={colIndex}
+                isActive={grid[rowIndex][colIndex]}
+                handleMouseDown={handleMouseDown}
+                handleMouseUp={handleMouseUp}
+                handleMouseEnter={handleMouseEnter}
+                toggleCellState={toggleCellState}
+              />
             ))
           ))
         }
