@@ -3,7 +3,6 @@ import { IGameLifeProps } from './interfaces/IGameLifeProps'
 import type { Grid } from './types/GridType'
 import { GridConfig } from './GridConfig'
 import { createEmptyGrid } from './utils/createEmptyGrid'
-import { twMerge } from 'tailwind-merge'
 import { PlayPauseButton } from './components/PlayPauseButton'
 import type { isInteger } from './types/isIntegerType'
 import { GenerationText } from './components/GenerationText'
@@ -17,6 +16,7 @@ import { SeedRandomButton } from './components/SeedRandomButton'
 import { ClearButton } from './components/ClearButton'
 import { assertIsInteger } from './utils/assertIsInteger'
 import GridButton from './components/GridButton'
+import { SelectorSpeed } from './components/SelectorSpeed'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX.Element => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
@@ -25,8 +25,11 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
   const [generation, setGeneration]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(0)
   const [isMouseDown, setIsMouseDown]: [boolean, React.Dispatch<React.SetStateAction<boolean>>] = useState(false)
   const [speed, setSpeed]: [number, React.Dispatch<React.SetStateAction<number>>] = useState(100)
+
   const playingRef: React.MutableRefObject<boolean> = useRef(isPlaying)
   playingRef.current = isPlaying
+  const speedRef: React.MutableRefObject<number> = useRef(speed)
+  speedRef.current = speed
 
   const runGameOfLife = useCallback(() => {
     if (!playingRef.current)  return
@@ -71,7 +74,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
       assertIsInteger(prevGeneration)
       return prevGeneration + 1
     })
-    setTimeout(runGameOfLife, 100)
+    setTimeout(runGameOfLife, speedRef.current)
   }, [playingRef, setGrid])
 
   const handleMouseDown = (): void => {
@@ -144,6 +147,14 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
             setGrid(createEmptyGrid(rows, columns))
             setIsPlaying(false)  
           }}
+        />
+        <SelectorSpeed
+          value={speed}
+          onChange={
+            (e: React.ChangeEvent<HTMLSelectElement>) => {
+              setSpeed(parseInt(e.target.value))
+            }
+          }
         />
       </div>
       <GenerationText generation={generation}/>
