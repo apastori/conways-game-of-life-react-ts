@@ -17,6 +17,7 @@ import { ClearButton } from './components/ClearButton'
 import { assertIsInteger } from './utils/assertIsInteger'
 import GridButton from './components/GridButton'
 import { SelectorSpeed } from './components/SelectorSpeed'
+import { isGridNoLivingCell } from './utils/isGridNoLivingCells'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX.Element => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
@@ -70,6 +71,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
       }
       return newGrid  
     })
+    // Set generation only if there are living cells
     setGeneration((prevGeneration: number) => {
       assertIsInteger(prevGeneration)
       return prevGeneration + 1
@@ -145,7 +147,8 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
         <ClearButton
           onClick={() => {
             setGrid(createEmptyGrid(rows, columns))
-            setIsPlaying(false)  
+            setIsPlaying(false)
+            setGeneration(0)  
           }}
         />
         <SelectorSpeed
