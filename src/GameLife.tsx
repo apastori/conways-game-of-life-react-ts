@@ -100,7 +100,7 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
       <Header isPlaying={isPlaying} hasSimulationStarted={hasSimulationStarted} />
 
       <div className="flex flex-col xl:flex-row gap-6 items-start justify-center">
-        <Panel title="Simulation Matrix" tone="cyan" className="flex-1 min-w-0 overflow-x-auto">
+        <Panel title="Simulation Matrix" tone="cyan" className="flex-1 min-w-0 overflow-x-auto overflow-y-hidden">
           <div className="flex justify-center p-2">
             <div
               className="grid-display inline-grid"
@@ -112,7 +112,6 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
                 background: 'rgb(var(--neon-purple) / 0.15)',
                 padding: '2px',
                 borderRadius: '4px',
-                boxShadow: '0 0 30px rgb(var(--neon-cyan) / 0.15)',
               }}
             >
               {grid.map((rows, rowIndex) =>
