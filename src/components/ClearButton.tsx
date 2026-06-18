@@ -1,24 +1,11 @@
 import React from 'react'
 import { IClearButtonProps } from '../interfaces/IClearButtonProps'
+import { ControlButton } from './ControlButton'
 
 export const ClearButton: React.FC<IClearButtonProps> = ({
-  onClick
+  onClick,
 }: IClearButtonProps): JSX.Element => {
   return (
-    <React.Fragment>
-      <button
-        onClick={onClick}
-        className={`
-          transition ease-in flex items-center justify-center h-8 rounded-full 
-          shadow-md px-4 bg-gray-700 hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed
-        `}
-        style={{
-          paddingRight: '1rem !important',
-          paddingLeft: '1rem !important'
-        }}
-      >
-        Clear
-      </button>
-    </React.Fragment>
+    <ControlButton label="Clear" onClick={onClick} tone="magenta" />
   )
 }

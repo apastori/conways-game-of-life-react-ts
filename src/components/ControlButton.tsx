@@ -1,24 +1,29 @@
 import React from 'react'
+import { twMerge } from 'tailwind-merge'
 import { IControlButtonProps } from '../interfaces/IControlButtonProps'
+
+const toneClassMap: Record<NonNullable<IControlButtonProps['tone']>, string> = {
+  cyan: '',
+  purple: 'cyber-btn--purple',
+  magenta: 'cyber-btn--magenta',
+}
 
 export const ControlButton: React.FC<IControlButtonProps> = ({
   label,
   onClick,
   disabled = false,
+  active = false,
+  tone = 'cyan',
 }: IControlButtonProps): JSX.Element => {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`
-        transition ease-in flex items-center justify-center 
-        h-8 rounded-full shadow-md px-4 bg-gray-700 hover:bg-gray-800 
-        disabled:opacity-50 disabled:cursor-not-allowed
-      `}
-      style={{
-        paddingRight: '1rem !important',
-        paddingLeft: '1rem !important',
-      }}
+      className={twMerge(
+        'cyber-btn',
+        toneClassMap[tone],
+        active && 'cyber-btn--active'
+      )}
     >
       {label}
     </button>

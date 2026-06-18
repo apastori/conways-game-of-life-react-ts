@@ -2,7 +2,6 @@ import { useCallback, useRef, useState } from 'react'
 import { IGameLifeProps } from './interfaces/IGameLifeProps'
 import type { Grid } from './types/GridType'
 import { createEmptyGrid } from './utils/createEmptyGrid'
-import { GenerationText } from './components/GenerationText'
 import { SeedRandomButton } from './components/SeedRandomButton'
 import { ClearButton } from './components/ClearButton'
 import { assertIsInteger } from './utils/assertIsInteger'
@@ -10,9 +9,12 @@ import GridButton from './components/GridButton'
 import { SelectorSpeed } from './components/SelectorSpeed'
 import { ControlButton } from './components/ControlButton'
 import { EditingToggle } from './components/EditingToggle'
-import { SimulationStatus } from './components/SimulationStatus'
 import { computeNextGrid } from './computeNextGrid'
 import { canEditGrid } from './canEditGrid'
+import { Header } from './components/Header'
+import { Panel } from './components/Panel'
+import { ControlSection } from './components/ControlSection'
+import { FooterStatusBar } from './components/FooterStatusBar'
 
 const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX.Element => {
   const { rows, columns }: { rows: number; columns: number } = gridConfig
@@ -94,91 +96,102 @@ const GameLife: React.FC<IGameLifeProps> = ({ gridConfig }: IGameLifeProps): JSX
   }
 
   return (
-    <div className='GameLife'
-      style={{
-        textAlign: 'center'
-      }}
-    >
-      <h1 className='md:text-2xl text-xl'>Conway's Game of Life</h1>
-      <div className='flex gap-4 items-center justify-center flex-wrap'
-        style={{
-          marginTop: '15px',
-          marginBottom: '15px'
-        }}>
-        <ControlButton label='Start' onClick={handleStart} disabled={isPlaying} />
-        <ControlButton label='Pause' onClick={handlePause} disabled={!isPlaying} />
-        <ControlButton label='Step' onClick={handleStep} disabled={isPlaying} />
-        <ClearButton
-          onClick={() => {
-            setGrid(createEmptyGrid(rows, columns))
-            setIsPlaying(false)
-            playingRef.current = false
-            setHasSimulationStarted(false)
-            setGeneration(0)
-          }}
-        />
-        <SeedRandomButton
-          onClick={() => {
-            const newGridRows: Grid = []
-            for (let i: number = 0; i < rows; i++) {
-              newGridRows.push(
-                Array.from(Array(columns), () => {
-                  return Math.random() > 0.75 ? 1 : 0
-                })
-              )
-            }
-            setGrid(newGridRows)
-          }}
-        />
-        <SelectorSpeed
-          value={speed}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
-            setSpeed(parseInt(e.target.value))
-          }}
-        />
+    <div className="GameLife w-full max-w-[1600px] mx-auto">
+      <Header isPlaying={isPlaying} hasSimulationStarted={hasSimulationStarted} />
+
+      <div className="flex flex-col xl:flex-row gap-6 items-start justify-center">
+        <Panel title="Simulation Matrix" tone="cyan" className="flex-1 min-w-0 overflow-x-auto">
+          <div className="flex justify-center p-2">
+            <div
+              className="grid-display inline-grid"
+              style={{
+                display: 'grid',
+                gridTemplateRows: `repeat(${rows}, 20px)`,
+                gridTemplateColumns: `repeat(${columns}, 20px)`,
+                gap: '1px',
+                background: 'rgb(var(--neon-purple) / 0.15)',
+                padding: '2px',
+                borderRadius: '4px',
+                boxShadow: '0 0 30px rgb(var(--neon-cyan) / 0.15)',
+              }}
+            >
+              {grid.map((rows, rowIndex) =>
+                rows.map((_col, colIndex) => (
+                  <GridButton
+                    key={`${rowIndex}-${colIndex}`}
+                    rowIndex={rowIndex}
+                    colIndex={colIndex}
+                    isActive={grid[rowIndex][colIndex]}
+                    handleMouseDown={handleMouseDown}
+                    handleMouseUp={handleMouseUp}
+                    handleMouseEnter={handleMouseEnter}
+                    toggleCellState={toggleCellState}
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </Panel>
+
+        <Panel title="Command Console" tone="purple" className="w-full xl:w-80 shrink-0">
+          <ControlSection title="Simulation Controls">
+            <ControlButton label="Start" onClick={handleStart} disabled={isPlaying} active={isPlaying} />
+            <ControlButton label="Pause" onClick={handlePause} disabled={!isPlaying} />
+            <ControlButton label="Step" onClick={handleStep} disabled={isPlaying} />
+            <SelectorSpeed
+              value={speed}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                setSpeed(parseInt(e.target.value))
+              }}
+            />
+          </ControlSection>
+
+          <ControlSection title="Grid Controls">
+            <ClearButton
+              onClick={() => {
+                setGrid(createEmptyGrid(rows, columns))
+                setIsPlaying(false)
+                playingRef.current = false
+                setHasSimulationStarted(false)
+                setGeneration(0)
+              }}
+            />
+            <SeedRandomButton
+              onClick={() => {
+                const newGridRows: Grid = []
+                for (let i: number = 0; i < rows; i++) {
+                  newGridRows.push(
+                    Array.from(Array(columns), () => {
+                      return Math.random() > 0.75 ? 1 : 0
+                    })
+                  )
+                }
+                setGrid(newGridRows)
+              }}
+            />
+          </ControlSection>
+
+          <ControlSection title="Editing Controls" className="flex-col items-stretch gap-4">
+            <EditingToggle
+              label="Allow Editing While Paused"
+              checked={allowEditingWhilePaused}
+              onChange={setAllowEditingWhilePaused}
+            />
+            <EditingToggle
+              label="Allow Editing While Running"
+              checked={allowEditingWhileRunning}
+              onChange={setAllowEditingWhileRunning}
+            />
+          </ControlSection>
+        </Panel>
       </div>
-      <div className='flex flex-col gap-2 items-center'
-        style={{
-          marginBottom: '15px'
-        }}>
-        <EditingToggle
-          label='Allow Editing While Paused'
-          checked={allowEditingWhilePaused}
-          onChange={setAllowEditingWhilePaused}
-        />
-        <EditingToggle
-          label='Allow Editing While Running'
-          checked={allowEditingWhileRunning}
-          onChange={setAllowEditingWhileRunning}
-        />
-      </div>
-      <SimulationStatus isPlaying={isPlaying} />
-      <GenerationText generation={generation}/>
-      <div
-        className='grid-display'
-        style={{
-          display: 'grid',
-          gridTemplateRows: `repeat(${rows}, 20px)`,
-          gridTemplateColumns: `repeat(${columns}, 20px)`
-        }}
-      >
-        {
-          grid.map((rows, rowIndex) => (
-            rows.map((_col, colIndex) => (
-              <GridButton
-                key={`${rowIndex}-${colIndex}`}
-                rowIndex={rowIndex}
-                colIndex={colIndex}
-                isActive={grid[rowIndex][colIndex]}
-                handleMouseDown={handleMouseDown}
-                handleMouseUp={handleMouseUp}
-                handleMouseEnter={handleMouseEnter}
-                toggleCellState={toggleCellState}
-              />
-            ))
-          ))
-        }
-      </div>
+
+      <FooterStatusBar
+        generation={generation}
+        isPlaying={isPlaying}
+        hasSimulationStarted={hasSimulationStarted}
+        speed={speed}
+      />
     </div>
   )
 }

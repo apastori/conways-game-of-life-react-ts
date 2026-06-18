@@ -12,19 +12,18 @@ const GridButton: React.FC<IGridButtonProps> = ({
   toggleCellState,
 }) => {
   return (
-    <React.Fragment>
-      <button
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
-        onClick={() => toggleCellState(rowIndex, colIndex)}
-        className={twMerge(
-          'border border-[#9050e9]',
-          isActive ? 'bg-[#ad7bee]' : 'bg-[#240643]'
-        )}
-      >
-      </button>
-    </React.Fragment>
+    <button
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+      onClick={() => toggleCellState(rowIndex, colIndex)}
+      className={twMerge(
+        'cell',
+        isActive ? 'cell--alive' : 'cell--dead'
+      )}
+      aria-label={`Cell ${rowIndex}, ${colIndex}`}
+      aria-pressed={isActive === 1}
+    />
   )
 }
 
